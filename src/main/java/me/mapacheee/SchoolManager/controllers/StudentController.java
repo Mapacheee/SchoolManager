@@ -27,17 +27,65 @@ public class StudentController {
                 .orElse(ResponseEntity.notFound().build()).getBody();
     }
 
-    @PutMapping("/{student}")
+    @PutMapping
     public Student putStudent(@RequestBody Student student) {
         Student s = null;
         for (Student stu: students) {
-            if (stu.getID() == student.getID()) {
-                // okay, i need to do changes in student class :p
+            if (stu.getName().equalsIgnoreCase(student.getName())) {
+                stu.setName(student.getName());
+                stu.setAddress(student.getAddress());
+                stu.setEmail(student.getEmail());
+                stu.setNotes(student.getNotes());
+
+                s = stu;
+                break;
             }
         }
+        return s;
+    }
 
+    @PostMapping
+    public Student postStudent(@RequestBody Student student) {
+        students.add(student);
         return student;
     }
 
+    @DeleteMapping({"/{id}"})
+    public Student deleteStudent(@PathVariable int id) {
+        Student s = null;
+        for (Student stu: students) {
+            if (stu.getID() == id) {
+                students.remove(stu);
+                s = stu;
+            }
+        }
+        return s;
+    }
+
+    @PatchMapping
+    public Student patchStudent(@RequestBody Student student) {
+        Student s = null;
+        for (Student stu: students) {
+
+            if (stu.getID() == student.getID()) {
+                if (student.getName() != null) {
+                    stu.setName(student.getName());
+                }
+                if (student.getAddress() != null) {
+                    stu.setAddress(student.getAddress());
+                }
+                if (student.getEmail() != null) {
+                    stu.setEmail(student.getEmail());
+                }
+                if (student.getNotes() != null) {
+                    stu.setNotes(student.getNotes());
+                }
+
+                s = stu;
+                break;
+            }
+        }
+        return s;
+    }
 
 }

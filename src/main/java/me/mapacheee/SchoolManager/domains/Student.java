@@ -31,6 +31,8 @@ public final class Student {
     public void setAddress(String address) { this.address = address; }
 
     public ListNotes getNotes() { return notes; }
+    public void setNotes(ListNotes notes) { this.notes = notes; }
+
     public int getID() { return ID; }
 
 }
