@@ -12,48 +12,25 @@ public final class Student {
     private static int IDcounter = 0;
     private ListNotes notes;
 
-    private Student() {
+    public Student(String name, String email, String address) {
+        this.name = name;
+        this.email = email;
+        this.address = address;
+
         this.ID = IDcounter;
         IDcounter++;
     }
 
     public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
     public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
     public ListNotes getNotes() { return notes; }
     public int getID() { return ID; }
 
-    public static class StudentBuilder {
-        private String name, email, address;
-        private ListNotes notes;
-
-        public StudentBuilder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public StudentBuilder setEmail(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public StudentBuilder setAddress(String address) {
-            this.address = address;
-            return this;
-        }
-
-        public StudentBuilder setNotes(ListNotes notes) {
-            this.notes = notes;
-            return this;
-        }
-        public Student build() {
-            Student student = new Student();
-            student.name = name;
-            student.email = email;
-            student.address = address;
-            student.notes = notes;
-
-            return student;
-        }
-    }
 }
