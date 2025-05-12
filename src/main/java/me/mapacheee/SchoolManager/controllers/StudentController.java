@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -15,33 +17,52 @@ public class StudentController {
     // Temporaly this will be a "database" of students to test
     private List<Student> students = new ArrayList<Student>();
 
+    private void updateFields(@RequestBody Student student, Student stu) {
+        if (student.getName() != null) {
+            stu.setName(student.getName());
+        }
+        if (student.getAddress() != null) {
+            stu.setAddress(student.getAddress());
+        }
+        if (student.getEmail() != null) {
+            stu.setEmail(student.getEmail());
+        }
+        if (student.getNotes() != null) {
+            stu.setNotes(student.getNotes());
+        }
+    }
+
     @GetMapping
     public List<Student> getStudents() { return students; }
 
     @GetMapping("/{id}")
-    public Student getStudent(@PathVariable int id) {
+    public ResponseEntity<Student> getStudent(@PathVariable int id) {
         return students.stream()
                 .filter(s -> s.getID() == id)
                 .findFirst()
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()).getBody();
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping
-    public Student putStudent(@RequestBody Student student) {
-        Student s = null;
-        for (Student stu: students) {
-            if (stu.getName().equalsIgnoreCase(student.getName())) {
-                stu.setName(student.getName());
-                stu.setAddress(student.getAddress());
-                stu.setEmail(student.getEmail());
-                stu.setNotes(student.getNotes());
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> putStudent(@RequestBody Student student, @PathVariable int id) {
 
-                s = stu;
-                break;
-            }
+        ResponseEntity<Student> re;
+        Optional<Student> existingStudent = students.stream()
+                .filter(s -> s.getID() == id)
+                .findFirst();
+
+        if (existingStudent.isEmpty()) {
+            re = ResponseEntity.notFound().build();
         }
-        return s;
+        else {
+            Student stu = existingStudent.get();
+            updateFields(student, stu);
+
+            re = ResponseEntity.ok(student);
+        }
+
+        return re;
     }
 
     @PostMapping
@@ -51,41 +72,31 @@ public class StudentController {
     }
 
     @DeleteMapping({"/{id}"})
-    public Student deleteStudent(@PathVariable int id) {
-        Student s = null;
-        for (Student stu: students) {
-            if (stu.getID() == id) {
-                students.remove(stu);
-                s = stu;
-            }
-        }
-        return s;
-    }
+    public ResponseEntity<Student> deleteStudent(@PathVariable int id) {
+        Iterator<Student> iterator = students.iterator();
+        ResponseEntity<Student> re = ResponseEntity.notFound().build();
 
-    @PatchMapping
-    public Student patchStudent(@RequestBody Student student) {
-        Student s = null;
-        for (Student stu: students) {
+        while (iterator.hasNext()) {
+            Student student = iterator.next();
+            if (student.getID() == id) {
+                iterator.remove();
+                re = ResponseEntity.ok(student);
 
-            if (stu.getID() == student.getID()) {
-                if (student.getName() != null) {
-                    stu.setName(student.getName());
-                }
-                if (student.getAddress() != null) {
-                    stu.setAddress(student.getAddress());
-                }
-                if (student.getEmail() != null) {
-                    stu.setEmail(student.getEmail());
-                }
-                if (student.getNotes() != null) {
-                    stu.setNotes(student.getNotes());
-                }
-
-                s = stu;
                 break;
             }
         }
-        return s;
+        return re;
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Student> patchStudent(@RequestBody Student student, @PathVariable int id) {
+        return students.stream()
+                .filter(s -> s.getID() == id)
+                .findFirst()
+                .map(stu -> {
+                    updateFields(student, stu);
+                    return ResponseEntity.ok(student); })
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
