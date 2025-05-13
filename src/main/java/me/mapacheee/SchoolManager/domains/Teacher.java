@@ -24,6 +24,8 @@ public class Teacher {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    public int getID() { return ID; }
+
     public List<Course> getCourses() { return courses; }
     public void setCourses(List<Course> courses) { this.courses = courses; }
     public void addCourse(Course course) { courses.add(course); }
