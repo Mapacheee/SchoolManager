@@ -14,7 +14,6 @@ public class Teacher {
     public Teacher(String name, String email) {
         this.name = name;
         this.email = email;
-        this.ID = ID;
         nextID++;
     }
 
